@@ -9,12 +9,12 @@ SwitchMap is an operator that maps the values emitted from an observable to a di
 MergeMap is an operator that maps the values emitted from an observable to a different observable.
 
 ___
-Pretty ~~similar~~ identical so far, right? There _are_ differences, but I'll save those for later.  Let's first pick appart this definition and then move to the differences. 
+Pretty ~~similar~~ identical so far, right? There _are_ differences, but I'll save those for later.  Let's first pick apart this definition and then move to the differences. 
 
-#### SwitchMap & MergMap
-SwitchMap _and_ MergeMap are operators that maps the values emitted from an observable to a different observable.
+#### SwitchMap & MergeMap
+SwitchMap _and_ MergeMap are operators that map the values emitted from an observable to a different observable.
 
-To start, let's break apart SwitchMap and MergeMap into the indiviuals **verbs** that make them up: 
+To start, let's break apart SwitchMap and MergeMap into the individual **verbs** that make them up: 
 
 
 | Verb     | What it does  |
@@ -44,12 +44,12 @@ CatConverter(dogs$)
 ```
 [Run this code](https://rxviz.com/v/2ORwP2Jd)
 
-This CatConvert takes a list of dogs and converts them to cats.  But it's not making use of the "_**value of something**_" from our map definition above:
+This CatConverter takes a list of dogs and converts them to cats.  But it's not making use of the "_**value of something**_" from our map definition above:
 >Use the _**value of something**_ to change it to something else.  
 
 Instead it's recieving a dog and returning a plain old cat. 
 
-Let's change CatConverter so instead of converting dogs to plain old cats, it creats cats with different colour fur. It will use the fur from the dog to create the cat.  (That sounds dark) 
+Let's update CatConverter so that instead of converting dogs to plain old cats, it creates cats with different colour fur. It will use the fur from the dog to create the cat.  (That sounds dark) 
 
 ```diff
 const dogs$ = Rx.Observable.from([
@@ -66,16 +66,16 @@ CatConverter(dogs$)
 ```
 [Run this code](https://rxviz.com/v/L8k6Y2J7)
 
-Notice the update to CatConverter? Now it uses the fur of the dog to determin the cats colour.
+Notice the update to CatConverter? Now it uses the fur of the dog to determine the cat's colour.
 
 Now our definition for map makes sense:
 >Use the _**value of something**_ to change it to _**something else**_. 
 
 A.K.A
 
->Use the _**Colour of the dog's fur**_ to change the dog to a _**cat with the dog's fur colour**_. 
+>Use the _**colour of the dog's fur**_ to change the dog to a _**cat with the dog's fur colour**_. 
 
-It helps to keeps this definition in mind because there are numourouse Rx operators that have the word **map** tacked on to the end. And it's always for the same reason: "To use the _**value of something**_ to change it to _**something else**_."
+It helps to keep this definition in mind because there are numourouse Rx operators that have the word **map** tacked on to the end. And it's always for the same reason: "To use the _**value of something**_ to change it to _**something else**_."
 
 ##### Operators with map
 - map
@@ -125,8 +125,9 @@ Looking at these two streams individually can be represented by these two marble
 
 **cats$:** `|-c--c--c------------------>`
 
-Each letter represents an emittion _over time_.  
-Time? Yes, notice in the code snippit the `dogs$` stream emits 1 dog every 1 second. And the `cats$` stream emits one cat ever 0.4 of a second. Apparently cats are faster than dogs.
+Each letter represents an emission _over time_.  
+
+Time? Yes, notice in the code snippit that the `dogs$` stream emits one dog every 1 second. And the `cats$` stream emits one cat every 0.4 of a second. Apparently cats are faster than dogs.
 
 Using `merge()` at the end of the snippit, we flatten these two streams into one stream. If you line everything up, that's visually easy to see:
 
@@ -138,7 +139,7 @@ Using `merge()` at the end of the snippit, we flatten these two streams into one
 
 **both$:** `|-c--cd-c--d-----d--------->`
 
-See how the dogs on the `$dogs` steawm line up with the dogs on the `both$` stream and the cats on the `cats$` stream line up with the cats on the `both$` stream? That's a merge.
+See how the dogs on the `$dogs` stream line up with the dogs on the `both$` stream and the cats on the `cats$` stream line up with the cats on the `both$` stream? That's a merge.
 
 
 Update the verbs with our merge definition:
@@ -155,7 +156,7 @@ Last verb on the list is switch.
 
 This is the tougher one of the bunch to understand based off the description, so let's jump to the cats and the dogs. 
 
-Remember CatConverter? It's causing a pretty big imbalance in the universe.  Let's hack that thing. We're going to change it to AnimalCloner! This way, any animal that wonders in the machine will get cloned every 100th of a second until the next animal wonders in. What could go wrong? Balance will be restored. 
+Remember CatConverter? It's causing a pretty big imbalance in the universe.  Let's hack that thing. We're going to change it to an AnimalCloner! This way, any animal that wanders into the machine will get cloned every 100th of a second until the next animal wanders in. What could go wrong? Balance will be restored. 
 
 ```javascript
 const dogClones$ = Rx.Observable.interval(100).mapTo('🐶');
@@ -175,7 +176,7 @@ AnimalCloner(catsAndDogs$);
 ```
 [Run This Code](https://rxviz.com/v/9J9NvG8l)
 
-First thing to note here is, it does NOT use the switch operator.  And has caused chaos:
+First thing to note here is that it does NOT use the switch operator.  And has caused chaos:
 
 ```javascript
 |------d$------d$------c$------d$------c$--------->
@@ -199,7 +200,7 @@ AnimalCloner is out of control. What we want is _one_ stream of animals for each
 
 `catsAndDogs$`: This is a stream that emits a mix of **dogClones$** and **catClones$** every second. The important take-away here is that this is a **stream of streams**.  That's why when we pass `catsAndDogs$` into `AnimalCloner()` we get that nasty barage of streams. What we want is one stream.  And this is exactly what's missing from the **switch** description:
 
->Switch operates on a stream where each emission is another stream.  Switch will   stop listening to the orignal stream at each emission and changes to the new emitted stream.  At _**every subsequent emission from the root stream, it will stop listening to the previouse child stream**_.  
+>Switch operates on a stream where each emission is another stream.  Switch will   stop listening to the original stream at each emission and change to the new emitted stream.  At _**every subsequent emission from the root stream, it will stop listening to the previous child stream**_.  
 
 Let's add `switch()`.
 
@@ -221,7 +222,7 @@ AnimalCloner(catsAndDogs$).switch();
 ```
 [Try this code](https://rxviz.com/v/9J9NvG8l)
 
-Fixed. Now it's just one nice streams _switches_ the lastest dog or cat stream over time. 
+Fixed. Now it's just one nice stream that _switches_ the latest dog or cat stream over time. 
 
 ```javascript
 |------d$------d$------c$------d$------c$--------->
@@ -234,7 +235,7 @@ Update the verbs with our switch definition:
 | -------- |-------------| 
 | Map      | Use the _**value of something**_ to change it to _**something else**_.  | |
 | Merge    | Merge takes two or more observable streams and _**combines**_ them together.      | 
-| Switch   | Switch operates on a stream where each emission is another stream.  Switch will   stop listening to the orignal stream at each emission and changes to the new emitted stream.  At every subsequent emission from the root stream, it will stop listening to the previouse child stream.       | 
+| Switch   | Switch operates on a stream where each emission is another stream.  Switch will   stop listening to the original stream at each emission and changes to the new emitted stream.  At every subsequent emission from the root stream, it will stop listening to the previous child stream.       | 
 
 ### MergeMap & SwitchMap
 Now that we have all the verbs defined, we can combine the definitions together to understand these two operators. 
@@ -243,11 +244,11 @@ Now that we have all the verbs defined, we can combine the definitions together 
 >MergeMap changes (maps) the values emitted from one stream to a new stream.  It combines (merges) all the new streams into one stream. 
 
 ##### SwitchMap
->SwitchMap changes (maps) the values emitted from one stream to a new stream.  It stops listening to the previouse stream and changs (switches) to the next stream. 
+>SwitchMap changes (maps) the values emitted from one stream to a new stream.  It stops listening to the previous stream and changes (switches) to the next stream. 
 
-Let's see these in action, but this time I'll go with a more real-world example:
+Let's see these in action, but this time I'll go with a more real-world example.
 
-Consider a chat app. The app has a list of users that you can click on to begin listening to their messages. At any point you can click a different users to begin seeing their messages instead. In Observable land this could look like:
+Consider a chat app. The app has a list of users that you can click on to begin listening to their messages. At any point, you can click a different user to begin seeing their messages instead. In Observable land, this could look like:
 
 ```javascript
 const kim = document.createElement('input');
@@ -273,7 +274,7 @@ chatStream$.map((message) => message);
 ```
 [Try this code](https://rxviz.com/examples/chess-game)
 
-This example attempts to accomplish the chat requirments with **mergeMap** Stepping through the code, we can understand what's going on.
+This example attempts to accomplish the chat requirements with **mergeMap**. Stepping through the code, we can understand what's going on.
 
 ```javascript
 const kim = document.createElement('input');
@@ -296,7 +297,7 @@ const chatStream$ = Rx.Observable.merge(
    Rx.Observable.fromEvent(bob, 'click'),
 )
 ```
-This creates two streams and them together. The streams are (1) clicks from 'bob' and (2) clicks from 'kim'.
+This creates two streams and combines them. The streams are (1) clicks from 'bob' and (2) clicks from 'kim'.
 
 ```javascript
 const chatStream$ = Rx.Observable.merge(
@@ -307,13 +308,13 @@ const chatStream$ = Rx.Observable.merge(
    .mapTo(`Hi from ${clickEvent.target.value}`)
 );
 ```
-This **mergeMap()'s** off the stream of clicks. Our definition of mergeMap tells us that it will **change** the value from the first stream of clicks into a **new Observable**.  The new Observable emmits a message from the clicked user every 800th of a second. 
+This **mergeMap()'s** off the stream of clicks. Our definition of mergeMap tells us that it will **change** the value from the first stream of clicks into a **new Observable**.  The new Observable emits a message from the clicked user every 800th of a second. 
 
-Unlike **switchMap** as clicks get emitted from the first stream, the previouse child message streams never actually stops.  They just keep collection over time! That gets pretty noisy. 
+Unlike **switchMap**, as clicks are emitted from the first stream, the previous child message stream never actually stops.  They just keep collecting over time! That gets pretty noisy. 
 
-Run the example and switch between bob and kim. You'll see each time you switch to a different user the message pile up. Clearly we're not switching we're merging!
+Run the example and switch between bob and kim. You'll see each time you switch to a different user, the messages pile up. Clearly, we're not switching - we're merging!
 
-We need to swtich. Let's update:
+We need to switch. Let's update:
 
 
 ```javascript
@@ -341,4 +342,4 @@ chatStream$.map((message) => message);
 ```
 [Try this code](https://rxviz.com/v/rOWyGb8a)
 
-Switched! Run the example again and observe the new behavoiur. It's actually switches now. As you change from bob to kim.  The streams stops listening to bob and _**switches**_ to kim.
+Switched! Run the example again and observe the new behaviour. It actually switches now. As you change from bob to kim, the stream stops listening to bob and _**switches**_ to kim.
