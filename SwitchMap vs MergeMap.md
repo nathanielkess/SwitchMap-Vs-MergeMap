@@ -42,6 +42,7 @@ const CatConverter = (dogs) => Rx.Observable.from(dogs)
 CatConverter(dogs$)
 
 ```
+[Run this Demo]: https://rxviz.com/v/2ORwP2Jd
 
 This CatConvert takes a list of dogs and converts them to cats.  But it's not making use of the "_**value of something**_" from our map definition above:
 >Use the _**value of something**_ to change it to something else.  
