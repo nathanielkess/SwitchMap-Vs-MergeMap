@@ -42,7 +42,7 @@ const CatConverter = (dogs) => Rx.Observable.from(dogs)
 CatConverter(dogs$)
 
 ```
-[Run this Demo]: https://rxviz.com/v/2ORwP2Jd
+[Run this code](https://rxviz.com/v/2ORwP2Jd)
 
 This CatConvert takes a list of dogs and converts them to cats.  But it's not making use of the "_**value of something**_" from our map definition above:
 >Use the _**value of something**_ to change it to something else.  
@@ -64,6 +64,7 @@ const CatConverter = (dogs) => Rx.Observable.from(dogs)
 CatConverter(dogs$)
 
 ```
+[Run this code](https://rxviz.com/v/L8k6Y2J7)
 
 Notice the update to CatConverter? Now it uses the fur of the dog to determin the cats colour.
 
@@ -116,6 +117,8 @@ Rx.Observable.merge(
   cats$
 );
 ```
+[Run this code](https://rxviz.com/v/L8k6Y2J7)
+
 Looking at these two streams individually can be represented by these two marble diagrams:
 
 **dogs$:**`|-----d-----d-----d-------->`
@@ -170,6 +173,7 @@ const AnimalCloner = (animals$) => animals$;
 
 AnimalCloner(catsAndDogs$);
 ```
+[Run This Code](https://rxviz.com/v/9J9NvG8l)
 
 First thing to note here is, it does NOT use the switch operator.  And has caused chaos:
 
@@ -215,6 +219,8 @@ const AnimalCloner = (animals$) => animals$;
 
 AnimalCloner(catsAndDogs$).switch();
 ```
+[Try this code](https://rxviz.com/v/9J9NvG8l)
+
 Fixed. Now it's just one nice streams _switches_ the lastest dog or cat stream over time. 
 
 ```javascript
@@ -265,6 +271,7 @@ const chatStream$ = Rx.Observable.merge(
 
 chatStream$.map((message) => message);
 ```
+[Try this code](https://rxviz.com/examples/chess-game)
 
 This example attempts to accomplish the chat requirments with **mergeMap** Stepping through the code, we can understand what's going on.
 
@@ -332,5 +339,6 @@ const chatStream$ = Rx.Observable.merge(
 chatStream$.map((message) => message);
 
 ```
+[Try this code](https://rxviz.com/v/rOWyGb8a)
 
 Switched! Run the example again and observe the new behavoiur. It's actually switches now. As you change from bob to kim.  The streams stops listening to bob and _**switches**_ to kim.
